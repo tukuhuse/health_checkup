@@ -153,3 +153,5 @@ const HealthcheckoutSchema = new Schema({
 		}
 	}
 })
+
+exports.HealthCheck = mongoose.model('HealthCheck', HealthcheckoutSchema);
