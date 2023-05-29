@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const HealthcheckoutSchema = new Schema({
+const HealthcheckupSchema = new Schema({
 	height: Number,				//身長
 	weight: Number,				//体重
 	girth: Number,				//腹囲
@@ -154,4 +154,5 @@ const HealthcheckoutSchema = new Schema({
 	}
 })
 
-exports.HealthCheck = mongoose.model('HealthCheck', HealthcheckoutSchema);
+const HealthCheck = mongoose.model('HealthCheck', HealthcheckupSchema);
+module.exports = HealthCheck;
