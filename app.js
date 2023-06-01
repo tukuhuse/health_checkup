@@ -32,6 +32,19 @@ app.post('/items', async(req, res) => {
 	}
 });
 // 健康診断の結果を修正
+app.put('/item/:id', async(req, res) => {
+	try {
+		const updateId = req.params.id;
+		const healthData = req.body;
+
+		connectDB();
+		console.log(updateId);
+		await HealthCheckup.updateOne({ _id: updateId }, { $set: healthData });
+		return res.status(200).json({message: "データ更新成功"});
+	} catch {
+		return res.status(400).json({message: "データ更新失敗"});
+	}
+})
 // 健康診断の結果を削除
 app.get('/', async(req, res) => {
 	await mongoose.connect(env.MONGOOSE);
