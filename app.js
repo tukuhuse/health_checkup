@@ -46,6 +46,17 @@ app.put('/item/:id', async(req, res) => {
 	}
 })
 // 健康診断の結果を削除
+app.delete('/item/:id', async(req, res) => {
+	try {
+		const deleteId = req.params.id;
+
+		connectDB();
+		await HealthCheckup.deleteOne({ _id: deleteId });
+		return res.status(200).json({message: "データ削除成功"});
+	} catch {
+		return res.status(400).json({message: "データ削除失敗"});
+	}
+});
 app.get('/', async(req, res) => {
 	await mongoose.connect(env.MONGOOSE);
 	console.log("Hello");
