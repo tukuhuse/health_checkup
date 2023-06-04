@@ -19,6 +19,21 @@ app.get('/showall', async(req, res) => {
 	await HealthCheckup.find();
 	console.log("success show all");
 });
+// 特定の診断結果を表示
+app.get('/item/:id', async(req, res) => {
+	try {
+		const findId = req.params.id;
+
+		connectDB();
+		const findData = await HealthCheckup.findById(findId);
+		return res.status(200).json({
+			message: "データ取得成功",
+			HealthData: findData
+		});
+	} catch {
+		return res.status(400).json({message:"データ取得失敗"});
+	}
+});
 // 健康診断の結果を登録
 app.post('/items', async(req, res) => {
 	try {
