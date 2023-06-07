@@ -9,9 +9,7 @@ const env = process.env;
 const { connectDB,disconnectDB } = require('./utils/database');
 const HealthCheckup = require('./utils/schemaModels');
 
-let findId;
-let receiveData;
-
+// データベース接続
 connectDB()
 	.then(() => {
 		app.listen(env.PORT, () => {
@@ -23,6 +21,7 @@ connectDB()
 		process.exit(1);
 	});
 
+// データベース接続解除の処理をプロセス終了時に追加
 process.on('SIGINT', () => {
 	disconnectDB()
 		.then(() => {
@@ -47,8 +46,7 @@ app.get('/items', async(req, res) => {
 // 健康診断の結果を登録
 app.post('/item', async(req, res) => {
 	try {
-		const healthData = req.body;
-		const createData = await HealthCheckup.create(healthData);
+		const createData = await HealthCheckup.create(req.body);
 		return res.status(200).json({
 			message: "データ登録成功",
 			HealthData: createData
@@ -59,16 +57,11 @@ app.post('/item', async(req, res) => {
 	}
 });
 
-app.param('id', (req, res, next, id) => {
-	findId = req.params.id;
-	receiveData = req.body;
-	next();
-});
-
+// 健康診断の結果を表示、更新、削除
 app.route('/item/:id')
 	.get(async(req, res) => {
 		try {
-			const findData = await HealthCheckup.findById(findId);
+			const findData = await HealthCheckup.findById(req.params.id);
 			return res.status(200).json({
 				message: "データ取得成功",
 				HealthData: findData
@@ -79,7 +72,7 @@ app.route('/item/:id')
 	})
 	.put(async(req, res) => {
 		try {
-			const updateData = await HealthCheckup.findByIdAndUpdate(findId, { $set: receiveData });
+			const updateData = await HealthCheckup.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
 			return res.status(200).json({
 				message: "データ更新成功",
 				HealthData: updateData
@@ -90,7 +83,7 @@ app.route('/item/:id')
 	})
 	.delete(async(req, res) => {
 		try {
-			const deleteData = await HealthCheckup.findByIdAndDelete(findId);
+			const deleteData = await HealthCheckup.findByIdAndDelete(req.params.id);
 			return res.status(200).json({
 				message: "データ削除完了",
 				HealthData: deleteData
