@@ -9,6 +9,9 @@ const env = process.env;
 const { connectDB,disconnectDB } = require('./utils/database');
 const HealthCheckup = require('./utils/schemaModels');
 
+let findId;
+let receiveData;
+
 connectDB()
 	.then(() => {
 		app.listen(env.PORT, () => {
@@ -41,20 +44,6 @@ app.get('/items', async(req, res) => {
 		return res.status(400).json({message:"データ取得失敗"});
 	}
 });
-// 特定の診断結果を表示
-app.get('/item/:id', async(req, res) => {
-	try {
-		const findId = req.params.id;
-		const findData = await HealthCheckup.findById(findId);
-		return res.status(200).json({
-			message: "データ取得成功",
-			HealthData: findData
-		});
-	} catch(err) {
-		console.error(err.message);
-		return res.status(400).json({message:"データ取得失敗"});
-	}
-});
 // 健康診断の結果を登録
 app.post('/item', async(req, res) => {
 	try {
@@ -69,32 +58,44 @@ app.post('/item', async(req, res) => {
 		return res.status(400).json({message: "データ登録失敗"});
 	}
 });
-// 健康診断の結果を修正
-app.put('/item/:id', async(req, res) => {
-	try {
-		const updateId = req.params.id;
-		const healthData = req.body;
-		const updateData = await HealthCheckup.updateOne({ _id: updateId }, { $set: healthData });
-		return res.status(200).json({
-			message: "データ更新成功",
-			HealthData: updateData
-		});
-	} catch(err) {
-		console.error(err.message);
-		return res.status(400).json({message: "データ更新失敗"});
-	}
+
+app.param('id', (req, res, next, id) => {
+	findId = req.params.id;
+	receiveData = req.body;
+	next();
 });
-// 健康診断の結果を削除
-app.delete('/item/:id', async(req, res) => {
-	try {
-		const deleteId = req.params.id;
-		const deleteData = await HealthCheckup.deleteOne({ _id: deleteId });
-		return res.status(200).json({
-			message: "データ削除成功",
-			HealthData: deleteData
-		});
-	} catch(err) {
-		console.error(err.message);
-		return res.status(400).json({message: "データ削除失敗"});
-	}
-});
+
+app.route('/item/:id')
+	.get(async(req, res) => {
+		try {
+			const findData = await HealthCheckup.findById(findId);
+			return res.status(200).json({
+				message: "データ取得成功",
+				HealthData: findData
+			});
+		} catch(err) {
+			console.error(err.message);
+		}
+	})
+	.put(async(req, res) => {
+		try {
+			const updateData = await HealthCheckup.findByIdAndUpdate(findId, { $set: receiveData });
+			return res.status(200).json({
+				message: "データ更新成功",
+				HealthData: updateData
+			});
+		} catch(err) {
+			console.error(err.message);
+		}
+	})
+	.delete(async(req, res) => {
+		try {
+			const deleteData = await HealthCheckup.findByIdAndDelete(findId);
+			return res.status(200).json({
+				message: "データ削除完了",
+				HealthData: deleteData
+			});
+		} catch(err) {
+			console.error(err.message);
+		}
+	})
