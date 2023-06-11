@@ -7,7 +7,7 @@ require('dotenv').config();
 const env = process.env;
 
 const { connectDB,disconnectDB } = require('./utils/database');
-const HealthCheckup = require('./utils/schemaModels');
+const { HealthCheckup } = require('./utils/schemaModels');
 
 // データベース接続
 connectDB()
@@ -29,6 +29,9 @@ process.on('SIGINT', () => {
 			process.exit(0);
 		});
 });
+
+const user = require('./routes/auth');
+app.use('/auth', user);
 
 // 健康診断の結果を表示(all)
 app.get('/items', async(req, res) => {

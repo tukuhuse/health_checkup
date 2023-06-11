@@ -23,4 +23,15 @@ const disconnectDB = async() => {
 	}
 }
 
+// const connectUserDB = async() => {
+// 	try {
+// 		await mongoose.connect(env.MONGOOSE_USERDB, {
+// 			useNewUrlParser: true,
+// 			useUnifiedTopology: true
+// 		});
+// 	} catch(err) {
+// 		console.error(err);
+// 	}
+// }
+
 module.exports = { connectDB, disconnectDB };

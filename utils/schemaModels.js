@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const Schema = mongoose.Schema;
 
@@ -152,7 +153,21 @@ const HealthcheckupSchema = new Schema({
 			hpv: String
 		}
 	}
-})
+});
+
+const userSchema = new Schema({
+	email: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	password: {
+		type: String,
+		required: true
+	}
+});
 
 const HealthCheck = mongoose.model('HealthCheck', HealthcheckupSchema);
-module.exports = HealthCheck;
+const User = mongoose.model('User', userSchema);
+
+module.exports = { HealthCheck, User };
