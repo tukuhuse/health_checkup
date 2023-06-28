@@ -3,7 +3,22 @@ const passportLocalMongoose = require('passport-local-mongoose');
 
 const Schema = mongoose.Schema;
 
+const userSchema = new Schema({
+	email: {
+		type: String,
+		required: true
+	}
+});
+
+userSchema.plugin(passportLocalMongoose);
+
+const User = mongoose.model('User', userSchema);
+
 const HealthcheckupSchema = new Schema({
+	userId: {
+		type: String,
+		required: true
+	},
 	height: Number,				//身長
 	weight: Number,				//体重
 	girth: Number,				//腹囲
@@ -155,19 +170,6 @@ const HealthcheckupSchema = new Schema({
 	}
 });
 
-const userSchema = new Schema({
-	email: {
-		type: String,
-		required: true,
-		unique: true
-	},
-	password: {
-		type: String,
-		required: true
-	}
-});
-
 const HealthCheck = mongoose.model('HealthCheck', HealthcheckupSchema);
-const User = mongoose.model('User', userSchema);
 
 module.exports = { HealthCheck, User };
