@@ -32,17 +32,18 @@ process.on('SIGINT', () => {
 
 const user = require('./routes/auth');
 app.use('/auth', user);
+const auth = require('./utils/auth');
 
 // 健康診断の結果を表示(all)
-app.get('/items', async(req, res) => {
+app.get('/items', auth , async(req, res) => {
 	try {
-		const findData = await HealthCheckup.find();
+		const findData = await HealthCheck.find({ userId: req.jwtPayload.id });
 		return res.status(200).json({
 			message: "データ取得成功",
 			HealthData: findData
 		});
 	} catch(err) {
-		console.error(err.message);
+		console.error(err);
 		return res.status(400).json({message:"データ取得失敗"});
 	}
 });
