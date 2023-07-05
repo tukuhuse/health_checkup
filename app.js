@@ -32,69 +32,8 @@ process.on('SIGINT', () => {
 
 const user = require('./routes/auth');
 app.use('/auth', user);
+
+
 const auth = require('./utils/auth');
-
-// 健康診断の結果を表示(all)
-app.get('/items', auth , async(req, res) => {
-	try {
-		const findData = await HealthCheck.find({ userId: req.jwtPayload.id });
-		return res.status(200).json({
-			message: "データ取得成功",
-			HealthData: findData
-		});
-	} catch(err) {
-		console.error(err);
-		return res.status(400).json({message:"データ取得失敗"});
-	}
-});
-// 健康診断の結果を登録
-app.post('/item', async(req, res) => {
-	try {
-		const createData = await HealthCheck.create(req.body);
-		return res.status(200).json({
-			message: "データ登録成功",
-			HealthData: createData
-		});
-	} catch(err) {
-		console.error(err.message);
-		return res.status(400).json({
-			message: "データ登録失敗"
-		});
-	}
-});
-
-// 健康診断の結果を表示、更新、削除
-app.route('/item/:id')
-	.get(async(req, res) => {
-		try {
-			const findData = await HealthCheck.findById(req.params.id);
-			return res.status(200).json({
-				message: "データ取得成功",
-				HealthData: findData
-			});
-		} catch(err) {
-			console.error(err.message);
-		}
-	})
-	.put(async(req, res) => {
-		try {
-			const updateData = await HealthCheck.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
-			return res.status(200).json({
-				message: "データ更新成功",
-				HealthData: updateData
-			});
-		} catch(err) {
-			console.error(err.message);
-		}
-	})
-	.delete(async(req, res) => {
-		try {
-			const deleteData = await HealthCheck.findByIdAndDelete(req.params.id);
-			return res.status(200).json({
-				message: "データ削除完了",
-				HealthData: deleteData
-			});
-		} catch(err) {
-			console.error(err.message);
-		}
-	})
+const item = require('./routes/item');
+app.use('/item', auth, item);
