@@ -19,6 +19,10 @@ const HealthcheckupSchema = new Schema({
 		type: String,
 		required: true
 	},
+	consultationDate: {			//健康診断受診日
+		type:Date,
+		required: true
+	},
 	height: Number,				//身長
 	weight: Number,				//体重
 	girth: Number,				//腹囲
